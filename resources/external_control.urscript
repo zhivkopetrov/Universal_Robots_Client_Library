@@ -8,6 +8,8 @@ textmsg("ExternalControl: steptime=", steptime)
 MULT_jointstate = {{JOINT_STATE_REPLACE}}
 MULT_time = {{TIME_REPLACE}}
 
+STOPJ_ACCELERATION = 4.0
+
 #Constants
 SERVO_UNINITIALIZED = -1
 SERVO_IDLE = 0
@@ -92,7 +94,7 @@ thread servoThread():
     exit_critical
   end
   textmsg("ExternalControl: servo thread ended")
-  stopj(4.0)
+  stopj(STOPJ_ACCELERATION)
 end
 
 # Helpers for speed control
@@ -108,7 +110,7 @@ thread speedThread():
     speedj(qd, 40.0, steptime)
   end
   textmsg("ExternalControl: speedj thread ended")
-  stopj(5.0)
+  stopj(STOPJ_ACCELERATION)
 end
 
 thread jointTrajectoryThread():
@@ -167,7 +169,7 @@ thread speedlThread():
     speedl(twist, 40.0, steptime)
   end
   textmsg("speedl thread ended")
-  stopj(5.0)
+  stopj(STOPJ_ACCELERATION)
 end
 
 thread servoThreadP():
@@ -204,7 +206,7 @@ thread servoThreadP():
     exit_critical
   end
   textmsg("pose servo thread ended")
-  stopj(4.0)
+  stopj(STOPJ_ACCELERATION)
 end
 
 def set_servo_pose(pose):
