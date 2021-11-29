@@ -239,10 +239,12 @@ while keepalive > 0 and control_mode > MODE_STOPPED:
     if control_mode != params_mult[8]:
       if control_mode == MODE_FORWARD:
         kill thread_trajectory
+        stopj(STOPJ_ACCELERATION)
         clear_remaining_trajectory_points()
       end
       control_mode = params_mult[8]
-      join thread_move
+      kill thread_move
+      stopj(STOPJ_ACCELERATION)
       if control_mode == MODE_SERVOJ:
         thread_move = run servoThread()
       elif control_mode == MODE_SPEEDJ:
