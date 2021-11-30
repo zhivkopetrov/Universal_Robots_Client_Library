@@ -115,6 +115,7 @@ thread speedThread():
 end
 
 #Calculate Cubic Spline coefficients
+# coefficients = [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
 coefficients0 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 coefficients1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 coefficients2 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -125,6 +126,7 @@ splineTimer = 0.0
 splineTravelTime = 0.0
 
 def reset_spline_coeff():
+  # coefficients = [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
   coefficients0 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
   coefficients1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
   coefficients2 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -163,45 +165,47 @@ def cubicSplineRun():
   return (splineTimer < (splineTravelTime + get_steptime()))
 end
 
-# qdd_last = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-# def quinticSplineCal(q_target, qd_target, qdd_target, time):
-#   q = get_target_joint_positions()
-#   qd = get_target_joint_speeds()
-#   qdd = qdd_last
+qdd_last = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+def quinticSplineCal(q_target, qd_target, qdd_target, time):
+  q = get_target_joint_positions()
+  qd = get_target_joint_speeds()
+  qdd = qdd_last
+  TIME1 =  time
+  TIME2 = pow(time,2)
+  TIME3 = pow(time,3)
+  TIME4 = pow(time,4)
+  TIME5 = pow(time,5)
 
-#   TIME2  = pow(time,2)
-#   TIME3  = pow(time,3)
-#   TIME4  = pow(time,4)
-#   TIME5  = pow(time,5)
+  # M = [[-6/TIME5, -3/TIME4, -0.5/TIME3, 6/TIME5, -3/TIME4, 0.5/TIME3], [15/TIME4, 8/TIME3, 1.5/TIME2, -15/TIME4, 7/TIME3, -1/TIME2], [-10/TIME3, -6/TIME2, -1.5/TIME, 10/TIME3, -4/TIME2, 0.5/TIME], [0, 0, 0.5, 0, 0, 0], [0, 1, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0]]
+  # coefficients = M * [q, q_target, qd, qd_target, qdd, qdd_target]
 
-#   coefficients0 = q;
-#   coefficients1 = qd;
-#   coefficients2 = 0.5*qdd;
-#   coefficients3 = (-20.0 * q + 20.0 * q_target - 3.0 * qdd * TIME2 + end_acc * TIME2 - 12.0 * qd * time - 8.0 * qd_target * time) / (2.0 * TIME3);
-#   coefficients4 = (30.0 * q - 30.0 * q_target + 3.0* qdd * TIME2 - 2.0 * end_acc * TIME2 + 16.0 * qd * time + 14.0*qd_target*time) / (2.0 * TIME4);
-#   coefficients5 = (-12.0 * q + 12.0 * q_target - qdd * TIME2 + end_acc * TIME2 - 6.0 * qd * time - 6.0 * qd_target * time) / (2.0 * TIME5);
-#   splineTimer = 0.0
-#   splineTravelTime  = time
-# end
+  coefficients0 = q
+  coefficients1 = qd
+  coefficients2 = 0.5*qdd
+  coefficients3 = (-20.0 * q + 20.0 * q_target - 3.0 * qdd * TIME2 + qdd_target * TIME2 - 12.0 * qd * time - 8.0 * qd_target * time) / (2.0 * TIME3)
+  coefficients4 = (30.0 * q - 30.0 * q_target + 3.0* qdd * TIME2 - 2.0 * qdd_target * TIME2 + 16.0 * qd * time + 14.0 * qd_target * time) / (2.0 * TIME4)
+  coefficients5 = (-12.0 * q + 12.0 * q_target - qdd * TIME2 + qdd_target * TIME2 - 6.0 * qd * time - 6.0 * qd_target * time) / (2.0 * TIME5)
+  splineTimer = 0.0
+  splineTravelTime  = time
+end
 
-# def quinticSplineRun():
-#   splineTimer = splineTimer + get_steptime()
-#   TIME1 = splineTimer
-#   TIME2  = pow(TIME1,2)
-#   TIME3  = pow(TIME1,3)
-#   TIME4  = pow(TIME1,4)
-#   TIME5  = pow(TIME1,5)
+def quinticSplineRun():
+  splineTimer = splineTimer + get_steptime()
+  TIME1 = splineTimer
+  TIME2  = pow(TIME1,2)
+  TIME3  = pow(TIME1,3)
+  TIME4  = pow(TIME1,4)
+  TIME5  = pow(TIME1,5)
 
-#   #position = coefficients0 + coefficients1 + TIME2*coefficients2 + TIME3*coefficients3 + TIME4*coefficients4 + TIME5*coefficients5;
+  #q = coefficients0 + coefficients1 + TIME2*coefficients2 + TIME3*coefficients3 + TIME4*coefficients4 + TIME5*coefficients5
+  qd = coefficients1 + 2.0*coefficients2 + 3.0*TIME2*coefficients3 + 4.0*TIME3*coefficients4 + 5.0*TIME4*coefficients5
+  qdd_last = 2.0*coefficients2 + 6.0*coefficients3 + 12.0*TIME2*coefficients4 + 20.0*TIME3*coefficients5
 
-#   qd = coefficients1 + 2.0*coefficients2 + 3.0*TIME2*coefficients3 + 4.0*TIME3*coefficients4 + 5.0*TIME4*coefficients5;
-#   qdd_last = 2.0*t[0]*coefficients2 + 6.0*coefficients3 + 12.0*TIME2*coefficients4 + 20.0*TIME3*coefficients5;
+  speedj(qd,1,get_steptime())
 
-#   speedj(qd,1,get_steptime())
-
-#   # Return True as long it is running the spline
-#   return (splineTimer < (splineTravelTime + get_steptime()))
-# end
+  # Return True as long it is running the spline
+  return (splineTimer < (splineTravelTime + get_steptime()))
+end
 
 thread jointTrajectoryThread():
   textmsg("Executing trajectory. Number of points: ", trajectory_points_left)
@@ -232,11 +236,13 @@ thread jointTrajectoryThread():
           textmsg("Executing splind with blending")
           qd = [ raw_point[7] / MULT_jointstate, raw_point[8] / MULT_jointstate, raw_point[9] / MULT_jointstate, raw_point[10] / MULT_jointstate, raw_point[11] / MULT_jointstate, raw_point[12] / MULT_jointstate]
           qdd = [ raw_point[13] / MULT_jointstate, raw_point[14] / MULT_jointstate, raw_point[15] / MULT_jointstate, raw_point[16] / MULT_jointstate, raw_point[17] / MULT_jointstate, raw_point[18] / MULT_jointstate]
-          cubicSplineCal(q, qd, tmptime)
+          #cubicSplineCal(q, qd, tmptime)
+          quinticSplineCal(q, qd, qdd, tmptime)
 
           running_spline = True
           while running_spline:
-            running_spline = cubicSplineRun()
+            #running_spline = cubicSplineRun()
+            running_spline = quinticSplineRun()
           end
         end
       else:
@@ -250,7 +256,8 @@ thread jointTrajectoryThread():
           cubicSplineCal(q, [0,0,0,0,0,0], tmptime)
           running_spline = True
           while running_spline:
-            running_spline = cubicSplineRun()
+            #running_spline = cubicSplineRun()
+            running_spline = quinticSplineRun()
           end
         end
       end
