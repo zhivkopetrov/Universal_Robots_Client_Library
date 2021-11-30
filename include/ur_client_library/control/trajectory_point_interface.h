@@ -83,8 +83,22 @@ public:
    *
    * \returns True, if the write was performed successfully, false otherwise.
    */
-  bool writeTrajectoryPoint(const vector6d_t* positions, const float goal_time, const float blend_radius,
+  bool writeTrajectoryPoint(vector6d_t const* positions, const float goal_time, const float blend_radius,
                             const bool cartesian);
+
+  /*!
+   * \brief Writes needed information to the robot to be read by the URScript program.
+   *
+   * \param positions A vector of joint or cartesian targets for the robot
+   * \param time The goal time to reach the target
+   * \param blend_radius The radius to be used for blending between control points
+   * \param cartesian True, if the written point is specified in cartesian space, false if in joint space
+   *
+   * \returns True, if the write was performed successfully, false otherwise.
+   */
+  bool writeTrajectoryPoint(vector6d_t const* positions, vector6d_t const* velocities,
+                            vector6d_t const* accelerations, const float goal_time,
+                            const float blend_radius, const bool cartesian);
 
   void setTrajectoryEndCallback(std::function<void(TrajectoryResult)> callback)
   {

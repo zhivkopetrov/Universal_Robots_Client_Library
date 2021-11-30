@@ -36,14 +36,19 @@ TrajectoryPointInterface::TrajectoryPointInterface(uint32_t port) : ReverseInter
 {
 }
 
-bool TrajectoryPointInterface::writeTrajectoryPoint(const vector6d_t* positions, const float goal_time,
-                                                    const float blend_radius, const bool cartesian)
+bool TrajectoryPointInterface::writeTrajectoryPoint(vector6d_t const* positions, vector6d_t const* velocities,
+                            vector6d_t const* accelerations, const float goal_time,
+                            const float blend_radius, const bool cartesian)
 {
   if (client_fd_ == -1)
   {
     return false;
   }
-  uint8_t buffer[sizeof(int32_t) * 9];
+  // 6 positions, 6 velocities, 6 accelerations, 1 goal time, 1 blend radius, 1 type
+  uint8_t buffer[sizeof(int32_t) * (3*6+3)];
+  for (size_t i = 0; i < 3*6+3; ++i) {
+    buffer[i] = 1;
+  }
   uint8_t* b_pos = buffer;
 
   if (positions != nullptr)
@@ -60,11 +65,41 @@ bool TrajectoryPointInterface::writeTrajectoryPoint(const vector6d_t* positions,
     b_pos += 6 * sizeof(int32_t);
   }
 
+  if (velocities != nullptr)
+  {
+    for (auto const& vel : *velocities)
+    {
+      int32_t val = static_cast<int32_t>(vel * MULT_JOINTSTATE);
+      val = htobe32(val);
+      b_pos += append(b_pos, val);
+    }
+  }
+  else
+  {
+    b_pos += 6 * sizeof(int32_t);
+  }
+
+  if (accelerations != nullptr)
+  {
+    for (auto const& acc : *accelerations)
+    {
+      int32_t val = static_cast<int32_t>(acc * MULT_JOINTSTATE);
+      val = htobe32(val);
+      b_pos += append(b_pos, val);
+    }
+  }
+  else
+  {
+    b_pos += 6 * sizeof(int32_t);
+  }
+
   int32_t val = static_cast<int32_t>(goal_time * MULT_TIME);
+  std::cout << "goal_time: " << val << std::endl;
   val = htobe32(val);
   b_pos += append(b_pos, val);
 
   val = static_cast<int32_t>(blend_radius * MULT_TIME);
+  std::cout << "blend_radius: " << val << std::endl;
   val = htobe32(val);
   b_pos += append(b_pos, val);
 
@@ -74,15 +109,33 @@ bool TrajectoryPointInterface::writeTrajectoryPoint(const vector6d_t* positions,
   }
   else
   {
-    val = JOINT_POINT;
+    val = 2;
   }
 
+  std::cout << "point type: " << val << std::endl;
   val = htobe32(val);
   b_pos += append(b_pos, val);
 
+  size_t read_pos = 0;
+  for (size_t i = 0; i < 3*6+3; ++i) {
+    int32_t data = reinterpret_cast<int32_t*>(buffer)[read_pos];
+    read_pos += 1;
+    std::cout << be32toh(data) << std::endl;
+  }
+
   size_t written;
 
-  return server_.write(client_fd_, buffer, sizeof(buffer), written);
+  std::cout << "Writing " << sizeof(buffer) << " bytes." << std::endl;
+  bool result = server_.write(client_fd_, buffer, sizeof(buffer), written);
+  std::cout << "Written " << written << " bytes." << std::endl;
+  return result;
+}
+
+
+bool TrajectoryPointInterface::writeTrajectoryPoint(vector6d_t const* positions, const float goal_time,
+                                                    const float blend_radius, const bool cartesian)
+{
+  return writeTrajectoryPoint(positions, nullptr, nullptr, goal_time, blend_radius, cartesian);
 }
 
 void TrajectoryPointInterface::connectionCallback(const int filedescriptor)
