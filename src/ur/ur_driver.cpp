@@ -211,16 +211,16 @@ bool UrDriver::writeJointCommand(const vector6d_t& values, const comm::ControlMo
   return reverse_interface_->write(&values, control_mode);
 }
 
-bool UrDriver::writeTrajectoryPoint(const vector6d_t& positions, const bool cartesian, const float goal_time,
+bool UrDriver::writeTrajectoryPoint(const vector6d_t& positions, const control::TrajectoryPointInterface::PointType type, const float goal_time,
                                     const float blend_radius)
 {
-  return trajectory_interface_->writeTrajectoryPoint(&positions, goal_time, blend_radius, cartesian);
+  return trajectory_interface_->writeTrajectoryPoint(&positions, goal_time, blend_radius, type);
 }
 
-bool UrDriver::writeTrajectoryPoint(const vector6d_t& positions, const vector6d_t& velocities, const vector6d_t& accelerations, const bool cartesian, const float goal_time,
+bool UrDriver::writeTrajectoryPoint(const vector6d_t& positions, const vector6d_t& velocities, const vector6d_t& accelerations, const control::TrajectoryPointInterface::PointType type, const float goal_time,
                                     const float blend_radius)
 {
-  return trajectory_interface_->writeTrajectoryPoint(&positions, &velocities, &accelerations, goal_time, blend_radius, cartesian);
+  return trajectory_interface_->writeTrajectoryPoint(&positions, &velocities, &accelerations, goal_time, blend_radius, type);
 }
 
 bool UrDriver::writeTrajectoryControlMessage(const control::TrajectoryControlMessage trajectory_action,
