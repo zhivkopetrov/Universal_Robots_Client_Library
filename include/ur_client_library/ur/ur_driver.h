@@ -199,8 +199,8 @@ public:
    *
    * \returns True on successful write.
    */
-  bool writeTrajectoryPoint(const vector6d_t& positions, const control::TrajectoryPointInterface::PointType type, const float goal_time = 0.0,
-                            const float blend_radius = 0.052);
+  bool writeTrajectoryPoint(const vector6d_t& positions, const control::TrajectoryPointInterface::PointType type,
+                            const float goal_time = 0.0, const float blend_radius = 0.052);
 
   /*!
    * \brief Writes a trajectory point onto the dedicated socket.
@@ -214,7 +214,8 @@ public:
    *
    * \returns True on successful write.
    */
-  bool writeTrajectoryPoint(const vector6d_t& positions, const vector6d_t& velocities, const vector6d_t& accelerations, const control::TrajectoryPointInterface::PointType type, const float goal_time = 0.0,
+  bool writeTrajectoryPoint(const vector6d_t& positions, const vector6d_t& velocities, const vector6d_t& accelerations,
+                            const control::TrajectoryPointInterface::PointType type, const float goal_time = 0.0,
                             const float blend_radius = 0.052);
 
   /*!

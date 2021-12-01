@@ -37,16 +37,17 @@ TrajectoryPointInterface::TrajectoryPointInterface(uint32_t port) : ReverseInter
 }
 
 bool TrajectoryPointInterface::writeTrajectoryPoint(vector6d_t const* positions, vector6d_t const* velocities,
-                            vector6d_t const* accelerations, const float goal_time,
-                            const float blend_radius, const TrajectoryPointInterface::PointType type)
+                                                    vector6d_t const* accelerations, const float goal_time,
+                                                    const float blend_radius,
+                                                    const TrajectoryPointInterface::PointType type)
 {
   if (client_fd_ == -1)
   {
     return false;
   }
   // 6 positions, 6 velocities, 6 accelerations, 1 goal time, 1 blend radius, 1 type
-  const size_t BUFFER_SIZE_INT = 3*6+3;
-  uint8_t buffer[sizeof(int32_t) * BUFFER_SIZE_INT] = {0};
+  const size_t BUFFER_SIZE_INT = 3 * 6 + 3;
+  uint8_t buffer[sizeof(int32_t) * BUFFER_SIZE_INT] = { 0 };
   uint8_t* b_pos = buffer;
 
   if (positions != nullptr)
@@ -107,9 +108,9 @@ bool TrajectoryPointInterface::writeTrajectoryPoint(vector6d_t const* positions,
   return server_.write(client_fd_, buffer, sizeof(buffer), written);
 }
 
-
 bool TrajectoryPointInterface::writeTrajectoryPoint(vector6d_t const* positions, const float goal_time,
-                                                    const float blend_radius, const TrajectoryPointInterface::PointType type)
+                                                    const float blend_radius,
+                                                    const TrajectoryPointInterface::PointType type)
 {
   return writeTrajectoryPoint(positions, nullptr, nullptr, goal_time, blend_radius, type);
 }

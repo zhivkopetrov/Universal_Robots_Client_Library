@@ -56,7 +56,6 @@ enum class TrajectoryResult : int32_t
 class TrajectoryPointInterface : public ReverseInterface
 {
 public:
-
   enum class PointType : int32_t
   {
     JOINT_POINT = 0,
@@ -104,9 +103,8 @@ public:
    *
    * \returns True, if the write was performed successfully, false otherwise.
    */
-  bool writeTrajectoryPoint(vector6d_t const* positions, vector6d_t const* velocities,
-                            vector6d_t const* accelerations, const float goal_time,
-                            const float blend_radius, const PointType type);
+  bool writeTrajectoryPoint(vector6d_t const* positions, vector6d_t const* velocities, vector6d_t const* accelerations,
+                            const float goal_time, const float blend_radius, const PointType type);
 
   void setTrajectoryEndCallback(std::function<void(TrajectoryResult)> callback)
   {
