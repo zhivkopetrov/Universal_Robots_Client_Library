@@ -5,6 +5,7 @@ Welcome to ur_client_library's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   installation
    architecture
 
 

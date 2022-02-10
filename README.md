@@ -1,9 +1,6 @@
 # Universal Robots Client Library
    * [Universal Robots Client Library](#universal-robots-client-library)
-      * [Requirements](#requirements)
       * [Build instructions](#build-instructions)
-         * [Plain cmake](#plain-cmake)
-         * [Inside a ROS workspace](#inside-a-ros-workspace)
       * [Use this library in other projects](#use-this-library-in-other-projects)
       * [License](#license)
       * [Library contents](#library-contents)
@@ -24,67 +21,7 @@ implemented in order to create external applications leveraging the versatility 
 robotic manipulators.
 
 ## Build instructions
-### Plain cmake
-To build this library standalone so that you can build you own applications using this library,
-follow the usual cmake procedure:
-```bash
-cd <clone of this repository>
-mkdir build && cd build
-cmake ..
-make
-sudo make install
-```
-
-This will install the library into your system so that it can be used by other cmake projects
-directly.
-
-### Inside a ROS workspace
-If you want to build this library inside a ROS workspace, e.g. because you want to build the
-[Universal Robots ROS driver](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver) from
-source, you cannot use `catkin_make` directly, as this library is not a catkin package. Instead, you
-will have to use
-[`catkin_make_isolated`](http://docs.ros.org/independent/api/rep/html/rep-0134.html) or [catkin
-build](https://catkin-tools.readthedocs.io/en/latest/verbs/catkin_build.html) to build your
-workspace.
-
-## Use this library in other projects
-When you want to use this library in other cmake projects, make sure to
- * Add `find_package(ur_client_library REQUIRED)` to your `CMakeLists.txt`
- * add `ur_client_library::urcl` to the list of `target_link_libraries(...)` commands inside your
-   CMakeLists.txt file
-
-As a minimal example, take the following "project":
-```c++
-/*main.cpp*/
-
-#include <iostream>
-#include <ur_client_library/ur/dashboard_client.h>
-
-int main(int argc, char* argv[])
-{
-  urcl::DashboardClient my_client("192.168.56.101");
-  bool connected = my_client.connect();
-  if (connected)
-  {
-    std::string answer = my_client.sendAndReceive("PolyscopeVersion\n");
-    std::cout << answer << std::endl;
-    my_client.disconnect();
-  }
-  return 0;
-}
-
-```
-
-```cmake
-# CMakeLists.txt
-
-cmake_minimum_required(VERSION 3.0.2)
-project(minimal_example)
-
-find_package(ur_client_library REQUIRED)
-add_executable(db_client main.cpp)
-target_link_libraries(db_client ur_client_library::urcl)
-```
+See [Build / installation](docs/installation.rst)
 
 ## License
 The majority of this library is licensed under the Apache-2.0 licensed. However, certain parts are
