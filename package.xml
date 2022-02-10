@@ -22,11 +22,14 @@
   <buildtool_depend>cmake</buildtool_depend>
 
   <build_depend>boost</build_depend>
+  <build_depend>python-catkin-pkg</build_depend>
+
   <exec_depend condition="$ROS_VERSION == 1">catkin</exec_depend>
   <exec_depend condition="$ROS_VERSION == 2">ament_cmake</exec_depend>
 
   <export>
     <build_type>cmake</build_type>
+    <rosdoc config="rosdoc.yaml"/>
   </export>
 
 </package>
