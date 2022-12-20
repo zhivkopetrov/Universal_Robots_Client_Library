@@ -42,6 +42,7 @@ template <typename T>
 class IConsumer
 {
 public:
+  virtual ~IConsumer() = default;
   /*!
    * \brief Set-up functionality of the consumer.
    */
